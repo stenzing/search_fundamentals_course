@@ -94,7 +94,11 @@ def query():
     print("query obj: {}".format(query_obj))
 
     #### Step 4.b.ii
-    response = None   # TODO: Replace me with an appropriate call to OpenSearch
+    response = opensearch.search(
+        body = query_obj,
+        index = 'bbuy_products'
+    )
+    # TODO: Replace me with an appropriate call to OpenSearch
     # Postprocess results here if you so desire
 
     #print(response)
@@ -111,11 +115,45 @@ def create_query(user_query, filters, sort="_score", sortDir="desc"):
     query_obj = {
         'size': 10,
         "query": {
-            "match_all": {} # Replace me with a query that both searches and filters
+            "bool": {
+                "must": [
+                    {
+                        "query_string": {
+                            'query': user_query,
+                            'fields': ['name', 'shortDescription', 'longDescription'],
+                            "phrase_slop": 3
+                        }
+                    }
+                ],
+                "filter": filters
+            }
+            
         },
+        "highlight": {"fields": {"shortDescription": {}}},
+        "sort": [{ sort: { "order": sortDir }}],
         "aggs": {
             #### Step 4.b.i: create the appropriate query and aggregations here
-
+            "regularPrice": {
+                "range": {
+                    "field": "regularPrice",
+                    "ranges": [
+                        { "from": 0.0, "to": 5.0 },
+                        { "from": 5.0, "to": 10.0 },
+                        { "from": 10.0, "to": 25.0 },
+                        { "from": 25.0, "to": 50.0 },
+                        { "from": 50.0, "to": 100.0 },
+                        { "from": 100.0, "to": 500.0 },
+                        { "from": 500.0, "to": 1000.0 },
+                        { "from": 1000.0, "to": 5000.0 }
+                    ]
+                }
+            },
+            "department": {
+                "terms": { "field": "department.keyword" }
+            },
+            "missing_images": {
+                "missing": {"field": "image.keyword"}
+            }
         }
     }
     return query_obj
