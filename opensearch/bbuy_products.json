@@ -110,7 +110,7 @@
         "type": "integer"
       },
       "depth": {
-        "type": "float"
+        "type": "text"
       },
       "description": {
         "type": "text",
@@ -143,7 +143,7 @@
         }
       },
       "height": {
-        "type": "float"
+        "type": "text"
       },
       "homeDelivery": {
         "type": "boolean"
@@ -350,10 +350,10 @@
         }
       },
       "weight": {
-        "type": "float"
+        "type": "text"
       },
       "width": {
-        "type": "float"
+        "type": "text"
       }
     }
   }
