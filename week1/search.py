@@ -115,19 +115,53 @@ def create_query(user_query, filters, sort="_score", sortDir="desc"):
     query_obj = {
         'size': 10,
         "query": {
-            "bool": {
-                "must": [
+            "function_score": {
+                "query": {
+                    "bool": {
+                        "must": [
+                            {
+                                "query_string": {
+                                    'query': user_query,
+                                    'fields': ['name', 'shortDescription', 'longDescription'],
+                                    "phrase_slop": 3
+                                }
+                            }
+                        ],
+                        "filter": filters
+                    }
+                }, 
+                "boost_mode": "multiply",
+                "score_mode": "avg",
+                "functions": [
                     {
-                        "query_string": {
-                            'query': user_query,
-                            'fields': ['name', 'shortDescription', 'longDescription'],
-                            "phrase_slop": 3
+                        "field_value_factor": {
+                        "field": "salesRankShortTerm",
+                        "factor": 1,
+                        "missing": 100000000,
+                        "modifier": "reciprocal"
+                        
+                        }
+                    },
+                    {
+                        "field_value_factor": {
+                        "field": "salesRankMediumTerm",
+                        "factor": 2,
+                        "missing": 100000000,
+                        "modifier": "reciprocal"
+                        
+                        }
+                    },
+                    {
+                        "field_value_factor": {
+                        "field": "salesRankLongTerm",
+                        "factor": 3,
+                        "missing": 100000000,
+                        "modifier": "reciprocal"
+                        
                         }
                     }
-                ],
-                "filter": filters
+                ]
             }
-            
         },
         "highlight": {
             "fields": {
