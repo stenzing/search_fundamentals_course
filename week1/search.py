@@ -91,7 +91,7 @@ def query():
     else:
         query_obj = create_query("*", [], sort, sortDir)
 
-    print("query obj: {}".format(query_obj))
+    #print("query obj: {}".format(query_obj))
 
     #### Step 4.b.ii
     response = opensearch.search(
@@ -129,7 +129,13 @@ def create_query(user_query, filters, sort="_score", sortDir="desc"):
             }
             
         },
-        "highlight": {"fields": {"shortDescription": {}}},
+        "highlight": {
+            "fields": {
+                "name": {},
+                "shortDescription": {},
+                "longDescription": {}
+            }
+        },
         "sort": [{ sort: { "order": sortDir }}],
         "aggs": {
             #### Step 4.b.i: create the appropriate query and aggregations here
