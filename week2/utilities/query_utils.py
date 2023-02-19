@@ -159,16 +159,30 @@ def create_query(user_query, filters, sort="_score", sortDir="desc", size=10, in
 # Give a user query from the UI and the query object we've built so far, adding in spelling suggestions
 def add_spelling_suggestions(query_obj, user_query):
     #### W2, L2, S1
-    print("TODO: IMPLEMENT ME")
-    #query_obj["suggest"] = {
-    #    "text": user_query,
-    #    "phrase_suggest": {
-
-    #    },
-    #    "term_suggest": {
-
-    #    }
-    #}
+    query_obj["suggest"] = {
+        "text": user_query,
+        "phrase_suggest": {
+            "phrase": {
+                "field": "suggest.trigrams",
+                "direct_generator":  [ {
+                    "field": "title.trigram",
+                    "suggest_mode": "popular",
+                    "min_word_length": 2
+                } ],
+                "highlight": {
+                    "pre_tag": "<em>",
+                    "post_tag": "</em>"
+                }
+            }
+        },
+        "term_suggest": {
+            "term": {
+                "field": "suggest.text",
+                "suggest_mode": "popular",
+                "min_word_length": 3
+            }
+        }
+   }
 
 
 # Given the user query from the UI, the query object we've built so far and a Pandas data GroupBy data frame,

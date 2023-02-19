@@ -31,9 +31,9 @@
             "catenate_words": true
         },
         "shingle": {
-            "type": "ngram",
-            "min_gram": 2,
-            "max_gram": 3
+            "type": "shingle",
+            "min_shingle_size": 2,
+            "max_shingle_size": 3
           }
       }
     }
