@@ -69,7 +69,8 @@ def autocomplete():
                 "autocomplete": {
                     "prefix": prefix,
                     "completion": {         
-                        "field": "suggest"  
+                        "field": "suggest",
+                        "skip_duplicates": True
                     }
                 }
             }}
